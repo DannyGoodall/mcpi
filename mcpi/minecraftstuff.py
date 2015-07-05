@@ -878,9 +878,6 @@ class MinecraftTurtle:
     def penblock(self, block_id, block_data = 0):
         self._penblock = block.Block(block_id, block_data)
 
-    def use_block(self, block_name):
-
-
     def speed(self, turtlespeed):
         self.turtlespeed = turtlespeed
 
