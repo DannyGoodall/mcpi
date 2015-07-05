@@ -1,3 +1,6 @@
+import math
+
+
 class Vec3:
     def __init__(self, x=0, y=0, z=0):
         self.x = x
@@ -16,7 +19,7 @@ class Vec3:
         return self
 
     def length(self):
-        return self.lengthSqr ** .5
+        return self.lengthSqr() ** .5
 
     def lengthSqr(self):
         return self.x * self.x + self.y * self.y  + self.z * self.z
@@ -45,7 +48,7 @@ class Vec3:
         return self.__iadd__(-rhs)
 
     def __repr__(self):
-        return "Vec3(%s,%s,%s)"%(self.x,self.y,self.z)
+        return 'Vec3({},{},{})'.format(self.x, self.y, self.z)
 
     def __iter__(self):
         return iter((self.x, self.y, self.z))
@@ -55,54 +58,29 @@ class Vec3:
         self.y = func(self.y)
         self.z = func(self.z)
 
-    def __cmp__(self, rhs):
-        dx = self.x - rhs.x
-        if dx != 0: return dx
-        dy = self.y - rhs.y
-        if dy != 0: return dy
-        dz = self.z - rhs.z
-        if dz != 0: return dz
-        return 0
+    def __eq__(self, other):
+        return all([self.x == other.x, self.y == other.y, self.z == other.z])
 
-    def iround(self): self._map(lambda v:int(v+0.5))
-    def ifloor(self): self._map(int)
+    def __ne__(self, other):
+        return not (self == other)
 
-    def rotateLeft(self):  self.x, self.z = self.z, -self.x
-    def rotateRight(self): self.x, self.z = -self.z, self.x
+    def iround(self):
+        self._map(lambda v: int(v + 0.5))
 
-def testVec3():
-    # Note: It's not testing everything
+    def ifloor(self):
+        self._map(int)
 
-    # 1.1 Test initialization
-    it = Vec3(1, -2, 3)
-    assert it.x == 1
-    assert it.y == -2
-    assert it.z == 3
+    def rotateLeft(self):
+        self.x, self.z = self.z, -self.x
 
-    assert it.x != -1
-    assert it.y != +2
-    assert it.z != -3
+    def rotateRight(self):
+        self.x, self.z = -self.z, self.x
 
-    # 2.1 Test cloning and equality
-    clone = it.clone()
-    assert it == clone
-    it.x += 1
-    assert it != clone
+    def distanceTo(self, other):
+        x_dist = other.x - self.x
+        y_dist = other.y - self.y
+        z_dist = other.z - self.z
+        return math.sqrt(x_dist ** 2 + y_dist ** 2 + z_dist ** 2)
 
-    # 3.1 Arithmetic
-    a = Vec3(10, -3, 4)
-    b = Vec3(-7, 1, 2)
-    c = a + b
-    assert c - a == b
-    assert c - b == a
-    assert a + a == a * 2
-
-    assert a - a == Vec3(0,0,0)
-    assert a + (-a) == Vec3(0,0,0)
-
-    # Test repr
-    e = eval(repr(it))
-    assert e == it
-
-if __name__ == "__main__":
-    testVec3()
+    def at_origin(self):
+        return all([self.x==0, self.y==0, self.z==0])
